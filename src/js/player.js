@@ -203,7 +203,9 @@ class DPlayer {
 
         index++;
         instances.push(this);
-        this.setRememberProgress();
+        if (!this.options.live) {
+            this.setRememberProgress();
+        }
     }
 
     /**
@@ -514,7 +516,9 @@ class DPlayer {
             if (video.duration !== 1 && video.duration !== Infinity) {
                 this.template.dtime.innerHTML = utils.secondToTime(video.duration);
             }
-            this.getRememberProgress();
+            if (!this.options.live) {
+                this.getRememberProgress();
+            }
         });
 
         // show video loaded bar: to inform interested parties of progress downloading the media
