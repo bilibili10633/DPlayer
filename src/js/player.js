@@ -203,22 +203,24 @@ class DPlayer {
 
         index++;
         instances.push(this);
+        this.setRememberProgress();
     }
 
     /**
      * Seek video
      */
-    seek(time) {
+    seek(time, notice = true) {
         time = Math.max(time, 0);
         if (this.video.duration) {
             time = Math.min(time, this.video.duration);
         }
-        if (this.video.currentTime < time) {
-            this.notice(`${this.tran('ff').replace('%s', (time - this.video.currentTime).toFixed(0))}`);
-        } else if (this.video.currentTime > time) {
-            this.notice(`${this.tran('rew').replace('%s', (this.video.currentTime - time).toFixed(0))}`);
+        if (notice) {
+            if (this.video.currentTime < time) {
+                this.notice(`${this.tran('ff').replace('%s', (time - this.video.currentTime).toFixed(0))}`);
+            } else if (this.video.currentTime > time) {
+                this.notice(`${this.tran('rew').replace('%s', (this.video.currentTime - time).toFixed(0))}`);
+            }
         }
-
         this.video.currentTime = time;
 
         if (this.danmaku) {
@@ -512,6 +514,7 @@ class DPlayer {
             if (video.duration !== 1 && video.duration !== Infinity) {
                 this.template.dtime.innerHTML = utils.secondToTime(video.duration);
             }
+            this.getRememberProgress();
         });
 
         // show video loaded bar: to inform interested parties of progress downloading the media
@@ -727,6 +730,62 @@ class DPlayer {
     static get version() {
         /* global DPLAYER_VERSION */
         return DPLAYER_VERSION;
+    }
+
+    setRememberProgress() {
+        window.addEventListener('beforeunload', (e) => {
+            let remember = localStorage.getItem('DPlayerRememberProgress');
+            if (remember == null) {
+                remember = '[]';
+            }
+            try {
+                remember = JSON.parse(remember);
+            } catch (e) {
+                localStorage.setItem('DPlayerRememberProgress', '[]');
+            }
+            if (remember.length > 20) {
+                remember.shift();
+            }
+            remember.forEach((item, index) => {
+                if (item.url === this.options.video.url) {
+                    remember.splice(index, 1);
+                }
+            });
+            if (this.video.duration - 90 > this.video.currentTime) {
+                remember.push({
+                    url: this.options.video.url,
+                    time: this.video.currentTime,
+                });
+            }
+            localStorage.setItem('DPlayerRememberProgress', JSON.stringify(remember));
+        });
+    }
+    progressLoaded = false;
+    getRememberProgress() {
+        let remember = localStorage.getItem('DPlayerRememberProgress');
+        if (remember == null) {
+            remember = '[]';
+        }
+        try {
+            remember = JSON.parse(remember);
+        } catch (e) {
+            localStorage.setItem('DPlayerRememberProgress', '[]');
+            return;
+        }
+        remember.forEach((item, index) => {
+            if (item.url === this.options.video.url) {
+                this.notice(
+                    `${this.tran('remember-progress')} ${utils.secondToTime(item.time)}&nbsp&nbsp  
+                    <a style="color: #d99c67;" id="back_to_start" href="/">${this.tran('back-to-start')}</a>`,
+                    4000
+                );
+                this.seek(item.time, false);
+                document.getElementById('back_to_start').onclick = (e) => {
+                    e.preventDefault();
+                    this.seek(0, false);
+                };
+            }
+        });
     }
 }
 

@@ -113,7 +113,7 @@ class Template {
         const notice = document.createElement('div');
         notice.classList.add('dplayer-notice');
         notice.style.opacity = opacity;
-        notice.innerText = text;
+        notice.innerHTML = text;
         if (id) {
             notice.id = `dplayer-notice-${id}`;
         }

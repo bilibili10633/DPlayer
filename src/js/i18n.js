@@ -107,6 +107,8 @@ const standard = {
     volume: 'Volume',
     live: 'Live',
     'video-info': 'Video info',
+    'remember-progress': 'Last time played to',
+    'back-to-start': 'Back to start',
 };
 
 // add translation text here
@@ -152,6 +154,8 @@ const tranTxt = {
         volume: '音量',
         live: '直播',
         'video-info': '视频统计信息',
+        'remember-progress': '为您恢复播放到',
+        'back-to-start': '回到开头',
     },
     'zh-tw': {
         'danmaku-loading': '彈幕載入中',
@@ -193,6 +197,8 @@ const tranTxt = {
         volume: '音量',
         live: '直播',
         'video-info': '影片統計訊息',
+        'remember-progress': '為您恢復播放到',
+        'back-to-start': '回到開頭',
     },
     'ko-kr': {
         'danmaku-loading': 'Danmaku를 불러오는 중입니다.',
@@ -236,6 +242,8 @@ const tranTxt = {
         Volume: '볼륨',
         live: '생방송',
         'video-info': '비디오 정보',
+        'remember-progress': '마지막 재생 위치',
+        'back-to-start': '처음으로 돌아가기',
     },
     de: {
         'danmaku-loading': 'Danmaku lädt...',
@@ -277,6 +285,8 @@ const tranTxt = {
         volume: 'Lautstärke',
         live: 'Live',
         'video-info': 'Video Info',
+        'remember-progress': 'Letztes Mal gespielt',
+        'back-to-start': 'Zurück zum Anfang',
     },
 };
 
