@@ -355,7 +355,9 @@ class DPlayer {
      * @param {Object} danmaku - new danmaku info
      */
     switchVideo(video, danmakuAPI) {
+        this.saveProgress();
         this.pause();
+        this.options.video.url = video.url;
         this.video.poster = video.pic ? video.pic : '';
         this.video.src = video.url;
         this.initMSE(this.video, video.type || 'auto');
@@ -376,6 +378,7 @@ class DPlayer {
                 });
             }
         }
+        this.progressLoaded = false;
     }
 
     initMSE(video, type) {
@@ -739,31 +742,34 @@ class DPlayer {
 
     setRememberProgress() {
         window.addEventListener('beforeunload', (e) => {
-            let remember = localStorage.getItem('DPlayerRememberProgress');
-            if (remember == null) {
-                remember = '[]';
-            }
-            try {
-                remember = JSON.parse(remember);
-            } catch (e) {
-                localStorage.setItem('DPlayerRememberProgress', '[]');
-            }
-            if (remember.length > 20) {
-                remember.shift();
-            }
-            remember.forEach((item, index) => {
-                if (item.url === this.options.video.url) {
-                    remember.splice(index, 1);
-                }
-            });
-            if (this.video.duration - 90 > this.video.currentTime) {
-                remember.push({
-                    url: this.options.video.url,
-                    time: this.video.currentTime,
-                });
-            }
-            localStorage.setItem('DPlayerRememberProgress', JSON.stringify(remember));
+            this.saveProgress();
         });
+    }
+    saveProgress() {
+        let remember = localStorage.getItem('DPlayerRememberProgress');
+        if (remember == null) {
+            remember = '[]';
+        }
+        try {
+            remember = JSON.parse(remember);
+        } catch (e) {
+            localStorage.setItem('DPlayerRememberProgress', '[]');
+        }
+        if (remember.length > 20) {
+            remember.shift();
+        }
+        remember.forEach((item, index) => {
+            if (item.url === this.options.video.url) {
+                remember.splice(index, 1);
+            }
+        });
+        if (this.video.duration - 90 > this.video.currentTime) {
+            remember.push({
+                url: this.options.video.url,
+                time: this.video.currentTime,
+            });
+        }
+        localStorage.setItem('DPlayerRememberProgress', JSON.stringify(remember));
     }
     progressLoaded = false;
     getRememberProgress() {
