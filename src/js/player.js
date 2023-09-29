@@ -513,10 +513,11 @@ class DPlayer {
         // show video time: the metadata has loaded or changed
         this.on('durationchange', () => {
             // compatibility: Android browsers will output 1 or Infinity at first
-            if (video.duration !== 1 && video.duration !== Infinity) {
+            let flag = video.duration !== 1 && video.duration !== Infinity;
+            if (flag) {
                 this.template.dtime.innerHTML = utils.secondToTime(video.duration);
             }
-            if (!this.options.live) {
+            if (!this.options.live && flag) {
                 this.getRememberProgress();
             }
         });
@@ -766,30 +767,33 @@ class DPlayer {
     }
     progressLoaded = false;
     getRememberProgress() {
-        let remember = localStorage.getItem('DPlayerRememberProgress');
-        if (remember == null) {
-            remember = '[]';
-        }
-        try {
-            remember = JSON.parse(remember);
-        } catch (e) {
-            localStorage.setItem('DPlayerRememberProgress', '[]');
-            return;
-        }
-        remember.forEach((item, index) => {
-            if (item.url === this.options.video.url) {
-                this.notice(
-                    `${this.tran('remember-progress')} ${utils.secondToTime(item.time)}&nbsp&nbsp  
-                    <a style="color: #d99c67;" id="back_to_start" href="/">${this.tran('back-to-start')}</a>`,
-                    4000
-                );
-                this.seek(item.time, false);
-                document.getElementById('back_to_start').onclick = (e) => {
-                    e.preventDefault();
-                    this.seek(0, false);
-                };
+        if (!this.progressLoaded) {
+            let remember = localStorage.getItem('DPlayerRememberProgress');
+            if (remember == null) {
+                remember = '[]';
             }
-        });
+            try {
+                remember = JSON.parse(remember);
+            } catch (e) {
+                localStorage.setItem('DPlayerRememberProgress', '[]');
+                return;
+            }
+            remember.forEach((item, index) => {
+                if (item.url === this.options.video.url) {
+                    this.notice(
+                        `${this.tran('remember-progress')} ${utils.secondToTime(item.time)}&nbsp&nbsp  
+                    <a style="color: #d99c67;" id="back_to_start" href="/">${this.tran('back-to-start')}</a>`,
+                        4000
+                    );
+                    this.seek(item.time, false);
+                    document.getElementById('back_to_start').onclick = (e) => {
+                        e.preventDefault();
+                        this.seek(0, false);
+                    };
+                }
+            });
+            this.progressLoaded = true;
+        }
     }
 }
 
