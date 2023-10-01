@@ -31,6 +31,7 @@ module.exports = {
             net: false,
             tls: false,
         },
+        preferRelative: true,
     },
 
     module: {
