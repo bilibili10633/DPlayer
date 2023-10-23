@@ -31,7 +31,7 @@ module.exports = {
             net: false,
             tls: false,
         },
-        preferRelative: true,
+        preferRelative: true, //fix build under windows
     },
 
     module: {

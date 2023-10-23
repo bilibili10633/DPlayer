@@ -23,6 +23,14 @@ export default (options) => {
         mutex: true,
         pluginOptions: { hls: {}, flv: {}, dash: {}, webtorrent: {} },
         preventClickToggle: false,
+        /* in some cases, some web browser natively support HLS but the support is not
+         * good enough, for
+         * example, while seeking some m3u8 videos, the image may be frozen, but the sound will still there,
+         * so we can force DPlayer to use hls.js to support these videos.
+         * But note that you should not use this option on <span style="font-size:20px">mobile safari</span>
+         * because the browser doesn't support hls.js at all.
+         **/
+        forceHlsPlugin: false,
     };
     for (const defaultKey in defaultOption) {
         if (defaultOption.hasOwnProperty(defaultKey) && !options.hasOwnProperty(defaultKey)) {

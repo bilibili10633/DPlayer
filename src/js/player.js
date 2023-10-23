@@ -352,7 +352,7 @@ class DPlayer {
      * Switch to a new video
      *
      * @param {Object} video - new video info
-     * @param {Object} danmaku - new danmaku info
+     * @param {Object} danmakuAPI - new danmaku info
      */
     switchVideo(video, danmakuAPI) {
         this.saveProgress();
@@ -403,7 +403,8 @@ class DPlayer {
             }
 
             if (this.type === 'hls' && (video.canPlayType('application/x-mpegURL') || video.canPlayType('application/vnd.apple.mpegURL'))) {
-                this.type = 'normal';
+                let ua = window.navigator.userAgent;
+                if (/iOS/i.test(ua) || /iPhone OS/i.test(ua) || !this.options.forceHlsPlugin) this.type = 'normal';
             }
 
             switch (this.type) {
@@ -763,7 +764,7 @@ class DPlayer {
                 remember.splice(index, 1);
             }
         });
-        if (this.video.duration - 90 > this.video.currentTime) {
+        if (this.video.duration - 90 > this.video.currentTime && this.video.currentTime > 90) {
             remember.push({
                 url: this.options.video.url,
                 time: this.video.currentTime,
