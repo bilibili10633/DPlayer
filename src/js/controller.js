@@ -441,7 +441,10 @@ class Controller {
                 let totalMovement = getTotalMovementDuration(this.player.video.duration);
                 movement = totalMovement * percentage;
                 indicator.innerHTML = Number.parseInt(movement) + 's';
-                indicator.style.opacity = '1';
+                //we dont wanna the indicator shows up while scroll up and down
+                if ((movement >= 1) | (movement <= -1)) {
+                    indicator.style.opacity = '1';
+                }
             }
         });
 
